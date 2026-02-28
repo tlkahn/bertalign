@@ -389,7 +389,7 @@ def find_top_k_sents(src_vecs, tgt_vecs, k=3):
         I: numpy array. Target index matrix of shape (num_src_sents, k).
     """
     embedding_size = src_vecs.shape[1]
-    if False: # GPU version
+    if torch.cuda.is_available() and platform == 'linux':
         res = faiss.StandardGpuResources() 
         index = faiss.IndexFlatIP(embedding_size)
         gpu_index = faiss.index_cpu_to_gpu(res, 0, index)

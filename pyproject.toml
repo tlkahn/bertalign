@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bertalign"
+version = "0.1.0"
+description = "An automatic multilingual sentence aligner"
+readme = "README.md"
+license = "GPL-3.0-or-later"
+requires-python = ">=3.10"
+authors = [
+    { name = "Jason", email = "bfsujason@163.com" },
+]
+
+dependencies = [
+    "numpy>=2.2",
+    "numba>=0.64",
+    "torch>=2.10",
+    "sentence-transformers>=5.2",
+    "sentence-splitter>=1.4",
+    "googletrans==4.0.0rc1",
+]
+
+[project.optional-dependencies]
+cpu = [
+    "faiss-cpu>=1.13.2",
+]
+gpu = [
+    # Do NOT use faiss-gpu-cu12[fix-cuda] — it downgrades nvidia-cuda-runtime
+    # to 12.1 which breaks PyTorch's CUDA 12.8 libs.
+    "faiss-gpu-cu12>=1.13.2",
+]
+
+[project.urls]
+Homepage = "https://github.com/bfsujason/bertalign"
+
+[tool.setuptools.packages.find]
+include = ["bertalign*"]
