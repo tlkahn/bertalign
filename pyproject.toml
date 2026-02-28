@@ -20,6 +20,7 @@ dependencies = [
     "sentence-transformers>=5.2",
     "sentence-splitter>=1.4",
     "googletrans==4.0.0rc1",
+    "legacy-cgi>=2.6.1",
 ]
 
 [project.optional-dependencies]

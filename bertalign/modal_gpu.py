@@ -91,8 +91,9 @@ class BertalignService:
 
 def align_remote(src_text: str, tgt_text: str, **kwargs) -> list[tuple[list[int], list[int]]]:
     """Call bertalign on Modal GPU from local code. Returns raw alignment indices."""
-    service = BertalignService()
-    data = service.align.remote(src_text, tgt_text, **kwargs)
+    with app.run():
+        service = BertalignService()
+        data = service.align.remote(src_text, tgt_text, **kwargs)
     return [(tuple(b[0]), tuple(b[1])) for b in data["result"]]
 
 
@@ -106,10 +107,11 @@ class Bertalign:
         self._kwargs = kwargs
 
     def align_sents(self):
-        service = BertalignService()
-        data = service.align.remote(
-            self._src, self._tgt, is_split=self._is_split, **self._kwargs
-        )
+        with app.run():
+            service = BertalignService()
+            data = service.align.remote(
+                self._src, self._tgt, is_split=self._is_split, **self._kwargs
+            )
         self.result = data["result"]
         self.src_sents = data["src_sents"]
         self.tgt_sents = data["tgt_sents"]

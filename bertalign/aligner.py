@@ -1,6 +1,6 @@
 import numpy as np
 
-from bertalign import model
+from bertalign import _get_model
 from bertalign.corelib import *
 from bertalign.utils import *
 
@@ -45,6 +45,7 @@ class Bertalign:
         print("Source language: {}, Number of sentences: {}".format(src_lang, src_num))
         print("Target language: {}, Number of sentences: {}".format(tgt_lang, tgt_num))
 
+        model = _get_model()
         print("Embedding source and target text using {} ...".format(model.model_name))
         src_vecs, src_lens = model.transform(src_sents, max_align - 1)
         tgt_vecs, tgt_lens = model.transform(tgt_sents, max_align - 1)
