@@ -31,6 +31,9 @@ gpu = [
     # to 12.1 which breaks PyTorch's CUDA 12.8 libs.
     "faiss-gpu-cu12>=1.13.2",
 ]
+modal = [
+    "modal>=0.73",
+]
 
 [project.urls]
 Homepage = "https://github.com/bfsujason/bertalign"

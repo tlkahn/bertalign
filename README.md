@@ -126,6 +126,74 @@ aligner.print_sents()
     叶文洁看过他写的文章，文笔很好，其中有一种与这个粗放环境很不协调的纤细和敏感，令她很难忘。
     Ye remembered reading his articles, which were written in a beautiful style, sensitive and fine, ill suited to the rough-hewn environment.
 
+## Remote GPU alignment (Modal)
+
+If you don't have a local NVIDIA GPU (e.g. on a Mac), you can offload the full pipeline — LaBSE encoding, faiss search, and DP alignment — to a cloud GPU via [Modal](https://modal.com). Only the `modal` package is needed locally; no torch, faiss, or numba required on your machine.
+
+### Setup
+
+```bash
+pip install -e ".[modal]"
+modal token new          # one-time auth (opens browser)
+```
+
+### Quick smoke test
+
+```bash
+modal run bertalign/modal_gpu.py
+```
+
+### Python API — drop-in replacement
+
+Just change the import. The rest of the code is identical to local usage:
+
+```python
+from bertalign.modal_gpu import Bertalign
+```
+
+```python
+aligner = Bertalign(src, tgt)
+aligner.align_sents()
+```
+
+```python
+aligner.print_sents()
+```
+
+    两年以后，大兴安岭。
+    Two years later, the Greater Khingan Mountains
+
+    "顺山倒咧——"
+    "Tim-ber…"
+    ...
+
+### Functional API
+
+For scripts that only need the raw alignment indices:
+
+```python
+from bertalign.modal_gpu import align_remote
+
+result = align_remote(src, tgt, is_split=False)
+# [([0], [0]), ([1], [1]), ([2], [2]), ...]
+```
+
+### Parameters
+
+Both `Bertalign` and `align_remote` accept the same keyword arguments as the local `Bertalign` class:
+
+| Parameter | Default | Description |
+|---|---|---|
+| `is_split` | `False` | Whether input is already split into one sentence per line |
+| `max_align` | `5` | Maximum N:M alignment size |
+| `top_k` | `3` | Top-k candidates for first-pass DP |
+| `win` | `5` | Window size for second-pass search path |
+| `skip` | `-0.1` | Skip penalty |
+| `margin` | `True` | Use margin-based scoring |
+| `len_penalty` | `True` | Apply length penalty |
+
+For implementation details, see [docs/modal-impl.md](./docs/modal-impl.md).
+
 ## Batch processing & evaluation
 
 The following example shows how to use Bertalign to align the Text+Berg corpus, and evaluate its performance with gold standard alignments. The evaluation script [eval.py](./bertalign/eval.py) is based on [Vecalign](https://github.com/thompsonb/vecalign).
